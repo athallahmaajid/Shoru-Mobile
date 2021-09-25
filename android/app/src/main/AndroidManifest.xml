@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.shoru_mobile">
    <application
-        android:label="shoru_mobile"
+        android:label="Shoru"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
