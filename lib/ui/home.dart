@@ -42,7 +42,11 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (BuildContext context) {
           return const AlertDialog(
-              title: Text("Loading..."),
+              backgroundColor: Color(0xFF1e1e1e),
+              title: Text(
+                "Loading...",
+                style: TextStyle(color: Colors.white),
+              ),
               content: SizedBox(
                   width: 1, height: 1, child: LinearProgressIndicator()));
         },
@@ -55,65 +59,67 @@ class _HomePageState extends State<HomePage> {
           return AlertDialog(
             backgroundColor: const Color(0xFF1e1e1e),
             content: (result["message"] == "success!")
-                ? Container(
-                    height: 200,
-                    color: const Color(0xFF1e1e1e),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Url",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Url:",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            child: Text(
                               result['url']!,
                               style: const TextStyle(color: Colors.white),
+                              // overflow: TextOverflow.ellipsis,
                             ),
-                            IconButton(
-                              onPressed: () {
-                                Clipboard.setData(
-                                  ClipboardData(text: result['url']),
-                                ).then(
-                                  (_) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content:
-                                            Text("URL copied to clipboard"),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              icon: const Icon(Icons.copy),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        const Text(
-                          "Actual Url",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                        Expanded(
-                          child: Text(
-                            rawUrl,
-                            style: const TextStyle(color: Colors.white),
                           ),
+                          IconButton(
+                            onPressed: () {
+                              Clipboard.setData(
+                                ClipboardData(text: result['url']!),
+                              ).then(
+                                (_) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("URL copied to clipboard"),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.copy,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      const Text(
+                        "Actual Url:",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        child: Text(
+                          rawUrl,
+                          style: const TextStyle(color: Colors.white),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   )
-                : Text("${result['message']}"),
+                : Text(
+                    "${result['message']}",
+                    style: TextStyle(color: Colors.white),
+                  ),
           );
         },
       );
@@ -135,6 +141,7 @@ class _HomePageState extends State<HomePage> {
           context: context,
           builder: (BuildContext context) {
             return const AlertDialog(
+              backgroundColor: Color(0xFF1e1e1e),
               content:
                   Text("Invalid URL", style: TextStyle(color: Colors.white)),
             );

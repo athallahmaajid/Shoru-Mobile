@@ -20,45 +20,41 @@ class _HistoryPageState extends State<HistoryPage> {
         rows.add(
           SizedBox(
             height: 150,
-            child: Column(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Url:",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Text(
+                        urls[i].url!,
+                        style: const TextStyle(color: Colors.white),
+                        // overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      const Text(
+                        "Actual Url:",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Text(
+                        urls[i].actualUrl!,
+                        style: const TextStyle(color: Colors.white),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
                   children: [
-                    Text(
-                      (i + 1).toString(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Url:",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.7,
-                          child: Text(
-                            urls[i].url!,
-                            style: const TextStyle(color: Colors.white),
-                            // overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        const Text(
-                          "Actual Url:",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          urls[i].actualUrl!,
-                          style: const TextStyle(color: Colors.white),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
                     IconButton(
                       onPressed: () {
                         Clipboard.setData(
@@ -76,19 +72,32 @@ class _HistoryPageState extends State<HistoryPage> {
                       icon: const Icon(
                         Icons.copy,
                         color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        urlBox.deleteAt(i);
+                        setState(() {});
+                      },
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.white,
+                        size: 24,
                       ),
                     ),
                   ],
                 ),
-                // const Divider(
-                //   color: Colors.white,
-                // ),
               ],
             ),
           ),
         );
       }
-      return ListView(shrinkWrap: true, children: rows);
+      return ListView(
+        physics: const ScrollPhysics(),
+        shrinkWrap: true,
+        children: rows,
+      );
     });
 
     return result;
@@ -96,30 +105,36 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Align(
-          alignment: Alignment.topCenter,
-          child: Text(
-            "History",
-            style: TextStyle(
-                color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+    return SingleChildScrollView(
+      physics: const ScrollPhysics(),
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.topCenter,
+            margin: const EdgeInsets.only(top: 10),
+            child: const Text(
+              "History",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        FutureBuilder<Widget>(
-          future: _createList(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return snapshot.data!;
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        ),
-      ],
+          const SizedBox(
+            height: 20,
+          ),
+          FutureBuilder<Widget>(
+            future: _createList(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data!;
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 }
