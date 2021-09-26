@@ -5,7 +5,7 @@ A Mobile App Version of https://github.com/Aldhanekaa/shoru
 ## Getting Started
 
 ### Get The APK version on release
-
+  1. Just Download it to your android phone
 
 ### Build App
   1. You must have flutter SDK
