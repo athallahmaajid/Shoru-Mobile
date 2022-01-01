@@ -14,7 +14,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? mode = "Random";
+  String protocol = "https://";
+  String mode = "Random";
   TextEditingController urlController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   Map<String, String> result = {};
@@ -25,9 +26,7 @@ class _HomePageState extends State<HomePage> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: (name != "")
-          ? jsonEncode(<String, String>{"url": url, "name": name})
-          : jsonEncode(<String, String>{"url": url}),
+      body: (name != "") ? jsonEncode(<String, String>{"url": url, "name": name}) : jsonEncode(<String, String>{"url": url}),
     );
     var data = jsonDecode(response.body);
     result = Map<String, String>.from(data);
@@ -37,6 +36,8 @@ class _HomePageState extends State<HomePage> {
     if (mode == "Random") {
       nameController = TextEditingController();
     }
+    rawUrl = protocol + rawUrl;
+
     if (Uri.parse(rawUrl).isAbsolute) {
       showDialog(
         context: context,
@@ -47,8 +48,7 @@ class _HomePageState extends State<HomePage> {
                 "Loading...",
                 style: TextStyle(color: Colors.white),
               ),
-              content: SizedBox(
-                  width: 1, height: 1, child: LinearProgressIndicator()));
+              content: SizedBox(width: 1, height: 1, child: LinearProgressIndicator()));
         },
       );
       await requestApi(rawUrl, nameController.text);
@@ -72,15 +72,14 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.5,
                             child: Text(
-                              result['url']!,
+                              result['Url']!,
                               style: const TextStyle(color: Colors.white),
-                              // overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           IconButton(
                             onPressed: () {
                               Clipboard.setData(
-                                ClipboardData(text: result['url']!),
+                                ClipboardData(text: result['Url']!),
                               ).then(
                                 (_) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -118,22 +117,21 @@ class _HomePageState extends State<HomePage> {
                   )
                 : Text(
                     "${result['message']}",
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
           );
         },
       );
       if (result["message"] == "success!") {
         var urlBox = await Hive.openBox("urls");
-        urlBox.add(Url(result['name']!, rawUrl, result['url']!));
+        urlBox.add(Url(result['name']!, rawUrl, result['Url']!));
       }
     } else if (mode == "Custom" && (nameController.text == "")) {
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return const AlertDialog(
-              content:
-                  Text("Mohon Isi nama", style: TextStyle(color: Colors.white)),
+              content: Text("Mohon Isi nama", style: TextStyle(color: Colors.white)),
             );
           });
     } else {
@@ -142,8 +140,7 @@ class _HomePageState extends State<HomePage> {
           builder: (BuildContext context) {
             return const AlertDialog(
               backgroundColor: Color(0xFF1e1e1e),
-              content:
-                  Text("Invalid URL", style: TextStyle(color: Colors.white)),
+              content: Text("Invalid URL", style: TextStyle(color: Colors.white)),
             );
           });
     }
@@ -184,32 +181,27 @@ class _HomePageState extends State<HomePage> {
                     "Generated URL",
                     style: TextStyle(color: Colors.white),
                   ),
-                  DropdownButton(
-                    selectedItemBuilder: (BuildContext context) {
-                      return <String>['Random', "Custom"]
-                          .map(
-                            (String value) => Text(
-                              mode!,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          )
-                          .toList();
-                    },
-                    value: mode,
-                    items: <String>["Random", "Custom"]
-                        .map<DropdownMenuItem<String>>(
-                      (String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      dropdownColor: const Color(0xFF1e1e1e),
+                      value: mode,
+                      iconSize: 24,
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.white),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          mode = newValue!;
+                        });
                       },
-                    ).toList(),
-                    onChanged: (String? value) {
-                      setState(() {
-                        mode = value;
-                      });
-                    },
+                      items: <String>['Random', "Custom"].map<DropdownMenuItem<String>>(
+                        (String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        },
+                      ).toList(),
+                    ),
                   ),
                 ],
               ),
@@ -240,20 +232,48 @@ class _HomePageState extends State<HomePage> {
                       ],
                     )
                   : Container(),
-              TextField(
-                decoration: const InputDecoration(
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(),
-                  labelText: "url",
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                cursorColor: Colors.white,
-                controller: urlController,
-                style: const TextStyle(color: Colors.white),
+              Row(
+                children: [
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      dropdownColor: const Color(0xFF1e1e1e),
+                      value: protocol,
+                      iconSize: 24,
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.white),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          protocol = newValue!;
+                        });
+                      },
+                      items: <String>['https://', "http://"].map<DropdownMenuItem<String>>(
+                        (String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        },
+                      ).toList(),
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(),
+                        labelText: "url",
+                        labelStyle: TextStyle(color: Colors.white),
+                      ),
+                      cursorColor: Colors.white,
+                      controller: urlController,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    primary: const Color(0xFF1e1e1e), elevation: 5.0),
+                style: ElevatedButton.styleFrom(primary: const Color(0xFF1e1e1e), elevation: 5.0),
                 onPressed: () {
                   checkUrl(urlController.text);
                 },

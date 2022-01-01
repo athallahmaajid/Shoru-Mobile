@@ -16,7 +16,7 @@ class _HistoryPageState extends State<HistoryPage> {
       List<Widget> rows = [];
       var urlBox = await Hive.openBox("urls");
       var urls = urlBox.values.toList();
-      for (int i = 0; i < urls.length && i < 50; i++) {
+      for (int i = 0; i < urls.length; i++) {
         rows.add(
           SizedBox(
             height: 150,

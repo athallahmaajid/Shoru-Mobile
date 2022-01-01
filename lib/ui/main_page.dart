@@ -13,7 +13,7 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
   final List<Widget> _widgetOptions = <Widget>[
     const HomePage(),
-    HistoryPage(),
+    const HistoryPage(),
   ];
   @override
   Widget build(BuildContext context) {
